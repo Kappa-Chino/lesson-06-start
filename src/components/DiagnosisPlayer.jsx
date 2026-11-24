@@ -1,4 +1,5 @@
 // ① ここに、useState の import を書く
+import { useState } from "react";
 import diagnosis from "../data/diagnosis.json";
 import { judge } from "../lib/score";
 import ResultView from "./ResultView";
@@ -6,9 +7,9 @@ import DebugPanel from "./DebugPanel";
 
 function DiagnosisPlayer() {
   // ① 質問番号を useState で覚える
-  const currentQuestion = 0;
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   // ④ 回答記録を useState で覚える
-  const answers = {};
+  const [answers, setAnswers]= useState({});
 
   const question = diagnosis.questions[currentQuestion];
   const isFinished = question === undefined;
@@ -17,6 +18,7 @@ function DiagnosisPlayer() {
   function handleNext() {
     if (currentQuestion < diagnosis.questions.length - 1) {
       // ② ここで、質問番号を更新する
+      setCurrentQuestion(currentQuestion + 1);
     }
   }
 
@@ -66,6 +68,7 @@ function DiagnosisPlayer() {
             key={choice.id}
             className={choice.id === selectedId ? "choice selected" : "choice"}
             /* ⑤ onClick を書く */
+            onClick = { () => handleChoose(choice) }
           >
             {choice.text}
           </button>
@@ -74,10 +77,10 @@ function DiagnosisPlayer() {
 
       <button
         className="next"
-        /* ③ onClick を書く */
-        /* ⑥ 実習②で、この7行を差し替える */
+        onClick={handleAnswerNext}
+        disabled={!answers[question.id]}
       >
-        次へ
+        回答して進む
       </button>
 
       <DebugPanel currentQuestion={currentQuestion} answers={answers} />
